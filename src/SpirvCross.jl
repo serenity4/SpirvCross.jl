@@ -7,12 +7,13 @@ using .LibSpirvCross
 const api = LibSpirvCross
 
 include("wrap_utils.jl")
-include("compiler.jl")
+include("resources.jl")
 
 export
     Context,
     IR,
     Compiler,
-    ShaderResources
+    ShaderResources,
+    get_resource_list
 
 end

@@ -20,6 +20,15 @@ struct ShaderResources <: Handle
     handle
 end
 
+struct ReflectedResource
+    id::Int
+    base_type::Int
+    type::Int
+    name::String
+end
+
+Base.convert(T::Type{ReflectedResource}, x::spvc_reflected_resource) = T(x.id, x.base_type_id, x.type_id, unsafe_string(x.name))
+
 function IR(ctx::Context, file)
     parsed_ir_ptr = null_ptr_ref()
 
@@ -45,4 +54,13 @@ function ShaderResources(compiler::Compiler)
     resources_ptr = null_ptr_ref()
     @check spvc_compiler_create_shader_resources(compiler, resources_ptr)
     ShaderResources(resources_ptr[])
+end
+
+function get_resource_list(resources::ShaderResources; resource_type=SPVC_RESOURCE_TYPE_UNIFORM_BUFFER)
+    list = Ref{Ptr{spvc_reflected_resource}}()
+    count = Ref{Int32}()
+    @check spvc_resources_get_resource_list_for_type(resources, resource_type, list, count)
+    # vec = Vector{spvc_reflected_resource}(undef, count[])
+    # @check spvc_resources_get_resource_list_for_type(resources, resource_type, vec, count)
+    convert.(ReflectedResource, unsafe_wrap(Array, list[], (count[],)))
 end
