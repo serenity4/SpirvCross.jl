@@ -1,1 +1,3 @@
 /Manifest.toml
+ctypes.jl
+LibTemplate.jl

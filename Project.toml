@@ -3,6 +3,11 @@ uuid = "f06137f4-7fbd-40d2-9445-4d828b4624cb"
 authors = ["Cédric Belmant"]
 version = "0.1.0"
 
+[deps]
+CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+SPIRV_Cross_jll = "b5475fc2-85c9-5de8-8430-71c9b732ec36"
+
 [compat]
 julia = "1.5"
 
