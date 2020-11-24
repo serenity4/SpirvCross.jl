@@ -1,1 +1,9 @@
 # SpirvCross
+
+![tests](https://github.com/serenity4/SpirvCross.jl/workflows/Run%20tests/badge.svg)
+
+Wrapper around [SPIR-V Cross](https://github.com/KhronosGroup/SPIRV-Cross) generated with Clang.
+
+This package intends to provide Julia bindings to SPIR-V Cross, and will suit the needs of those who only want a barebone wrapper. Abstractions, however, are not planned at the moment, though the package contains a few convenience functions to reflect into compiled SPIR-V shaders.
+
+It is currently used in conjunction with [Vulkan.jl](https://github.com/JuliaGPU/Vulkan.jl) (under active development).
