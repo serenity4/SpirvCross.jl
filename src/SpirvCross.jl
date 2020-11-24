@@ -1,7 +1,5 @@
 module SpirvCross
 
-using Reexport
-
 include(joinpath(@__DIR__, "..", "gen", "LibSpirvCross.jl"))
 using .LibSpirvCross
 const api = LibSpirvCross
