@@ -37,6 +37,6 @@ Base.cconvert(T::Type{<:Ptr}, x::Handle) = x
 
 Base.unsafe_convert(T::Type{Ptr{Nothing}}, x::Handle) = x.handle
 
-Base.broadcastable(x::SPVCStruct) = Ref(x)
+Base.broadcastable(x::Handle) = Ref(x)
 
 null_ptr_ref() = Ref{Ptr{Cvoid}}()
