@@ -27,59 +27,17 @@ macro check(expr, msg)
     end
 end
 
-unsafe_pointer(obj::Base.RefValue{T}) where {T} = Base.unsafe_convert(Ptr{T}, obj)
-unsafe_pointer(obj::AbstractArray) = pointer(obj)
-unsafe_pointer(obj::AbstractString) = pointer(obj)
-unsafe_pointer(obj::Ptr{Nothing}) = obj
-
-unsafe_pointer_load(ptr::Ptr{T}; index=1) where {T} = unsafe_load(ptr, index)
-unsafe_pointer_load(ptr::Ptr{T}, length::Integer) where {T} = unsafe_wrap(Array{T}, ptr, length)
-unsafe_pointer_load(ptr::Ptr{UInt8}) = unsafe_string(ptr)
-unsafe_pointer_load(ptr::Cstring) = unsafe_string(ptr)
-
-pointer_length(p) = p == C_NULL || isempty(p) ? 0 : length(p)
-
-to_vk(T, x) = convert(T, x)
-to_vk(T::Type{UInt32}, version::VersionNumber) = T((version.major << 22) + (version.minor << 12) + version.patch)
-to_vk(T::Type{NTuple{N,UInt8}}, s::AbstractString) where {N} = T(s * "\0" ^ (N - length(s)))
-
-from_vk(T, x) = convert(T, x)
-from_vk(T::Type{VersionNumber}, version::UInt32) = T(version >> 22, (version >> 12) & 0x3ff, version & 0xfff)
-from_vk(T::Type{<: AbstractArray{P}}, b::Ptr{P}; length) where P = unsafe_pointer_load(b, length)
-from_vk(T::Type{S}, str::NTuple{N,UInt8}) where {N,S <: AbstractString} = T(filter!(x -> x ≠ 0, UInt8[str...]))
-
-bitwise_or_optional(value, option::Nothing) = value
-bitwise_or_optional(value, option) = value | option
-
 """
-Represents any kind of wrapper structure that was generated from a Vulkan structure.
+Wraper around an opaque handle that refers to internal SPVC data.
 """
-abstract type SPVCStruct end
-
-"""
-Opaque handle referring to internal Vulkan data.
-Finalizer registration is taken care of by constructors.
-"""
-abstract type Handle <: SPVCStruct end
-
-"""
-Storage structure, used for preserving data that is in use by pointers.
-"""
-abstract type Bag end
-
-struct BagEmpty <: Bag end
-
-const EmptyBag = BagEmpty()
+abstract type Handle end
 
 Base.cconvert(T::Type, x::SPVCStruct) = x
-Base.cconvert(T::Type{<:Ptr}, x::AbstractArray{<:SPVCStruct}) = getproperty.(x, :vks)
 Base.cconvert(T::Type{<:Ptr}, x::AbstractArray{<:Handle}) = getproperty.(x, :handle)
-Base.cconvert(T::Type{<:Ptr}, x::SPVCStruct) = Ref(x.vks)
 Base.cconvert(T::Type{<:Ptr}, x::Handle) = x
 
-Base.unsafe_convert(T::Type, x::SPVCStruct) = x.vks
 Base.unsafe_convert(T::Type{Ptr{Nothing}}, x::Handle) = x.handle
 
-Base.broadcastable(x::SPVCStruct) = Ref(x) # indicate that VulkanStructs behave as scalars for broadcasting
+Base.broadcastable(x::SPVCStruct) = Ref(x)
 
 null_ptr_ref() = Ref{Ptr{Cvoid}}()
