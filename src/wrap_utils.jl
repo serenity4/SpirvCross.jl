@@ -32,7 +32,6 @@ Wraper around an opaque handle that refers to internal SPVC data.
 """
 abstract type Handle end
 
-Base.cconvert(T::Type, x::SPVCStruct) = x
 Base.cconvert(T::Type{<:Ptr}, x::AbstractArray{<:Handle}) = getproperty.(x, :handle)
 Base.cconvert(T::Type{<:Ptr}, x::Handle) = x
 
